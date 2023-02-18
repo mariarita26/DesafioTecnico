@@ -1,6 +1,6 @@
 Modelo Conceitual
 
-![Imagem do WhatsApp de 2023-02-18 à(s) 00 20 06](https://user-images.githubusercontent.com/89050107/219829298-f8da91fc-45c7-4dd1-8b89-5499cfb6660c.jpg)
+![Conceitual](https://user-images.githubusercontent.com/89050107/219829332-01ee8072-3b28-4c29-b67d-66d3f622fa71.png)
 
 Modelo Lógico
 
