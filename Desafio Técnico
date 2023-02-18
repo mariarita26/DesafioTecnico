@@ -1,0 +1,192 @@
+CREATE TABLE Cliente(
+	idcliente 		SERIAL 			NOT NULL,
+	nome 			VARCHAR(150) 	NOT NULL,
+	idade 			INT				NOT NULL,
+	limitecredito 	DECIMAL 		NOT NULL,
+	statusbloqueio 	VARCHAR(45) 	NOT NULL,
+	CONSTRAINT PK_cliente PRIMARY KEY (idcliente)
+)
+
+SELECT * FROM CLIENTE
+
+CREATE TABLE Pagamento(
+	idpagamento 	SERIAL 			NOT NULL,
+	valor 			DECIMAL 		NOT NULL, 
+	datapagamento 	DATE,
+	CONSTRAINT PK_pagamento PRIMARY KEY (idpagamento)
+)
+
+SELECT * FROM PAGAMENTO
+
+CREATE TABLE Fatura(
+	idfatura 		SERIAL 			NOT NULL,
+	valor 			DECIMAL 		NOT NULL,
+	datavencimento 	DATE 			NOT NULL,
+	status 			VARCHAR(45) 	NOT NULL,
+	idpagamento 	INT,
+	CONSTRAINT PK_fatura 			 PRIMARY KEY (idfatura),
+	CONSTRAINT FK_fatura_idpagamento FOREIGN KEY (idpagamento) REFERENCES pagamento
+)
+
+SELECT * FROM FATURA
+
+CREATE TABLE Possui(
+	idcliente 		INT 			 NOT NULL,
+	idfatura 		INT 			 NOT NULL,
+	CONSTRAINT PK_possui			 PRIMARY KEY (idcliente, idfatura),
+	CONSTRAINT FK_possui_idcliente 	 FOREIGN KEY (idcliente) REFERENCES cliente,
+	CONSTRAINT FK_possui_idfatura 	 FOREIGN KEY (idfatura)  REFERENCES fatura
+)
+
+SELECT * FROM POSSUI
+
+/* 														INSERÇÃO DE DADOS 																*/
+
+INSERT INTO Cliente VALUES
+	(default, 'Ântonia Maria', 19, 1200, 'Ativo'),
+	(default, 'José Amaral', 20, 1500, 'Ativo'),
+	(default, 'João Silva', 22, 1500, 'Bloqueado'),
+	(default, 'Maria Júlia', 35, 2000, 'Ativo'),
+	(default, 'Joana Cabral', 25, 1800, 'Ativo'),
+	(default, 'Lívia da Silveira', 36, 5000, 'Ativo'),
+	(default, 'Davi Costa', 26, 1200, 'Ativo'),
+	(default, 'Maria', 19, 800, 'Ativo')
+
+
+INSERT INTO Pagamento VALUES
+	(default, 1200, '2023-01-05'),
+	(default, 1500, '2022-12-09'),  
+	(default, 2000, '2022-11-25'), 
+	(default, 1800, '2023-02-08'), 
+	(default, 1500, '2023-01-09'),
+	(default, 800, '2023-02-08'), 
+	(default, 5000, null), 
+	(default, 1500, null) 
+
+INSERT INTO Fatura VALUES
+	(default, 1200, '2023-01-05', 'Pago', 1),  
+	(default, 1500, '2022-12-09', 'Pago', 2), 
+	(default, 2000, '2022-11-26', 'Pago', 3),  
+	(default, 1800, '2023-02-01', 'Atraso', null), 
+	(default, 800, '2023-02-10', 'Atraso', 6),
+	(default, 5000, '2023-01-23', 'Atraso', 7),
+	(default, 1500, '2023-02-07', 'Atraso', 8)
+
+INSERT INTO Possui VALUES
+	(1, 1), 
+	(2, 2),  
+	(4, 3), 
+	(5, 4),  
+	(8, 5), 
+	(6, 6), 
+	(3, 7)
+
+/*                											CONSULTAS																	*/
+
+
+/* a. Consultar clientes com idade entre 18 e 21 anos que possuem limite de crédito maior ou igual a 1.000 reais.    
+Retorno: Total de clientes. */
+
+SELECT COUNT(*) Total FROM cliente
+WHERE (idade >= 18 AND idade <= 21) 
+AND (limitecredito >= 1000)
+
+/* b. Consultar clientes cujo pagamento foi realizado no dia do vencimento da fatura.
+Retorno: Data de vencimento e a quantidade.  */
+
+SELECT f.datavencimento, COUNT(*) quantidade
+FROM cliente c JOIN possui po 
+ON c.idcliente = po.idcliente
+JOIN fatura f ON f.idfatura = po.idfatura
+JOIN pagamento p ON f.idpagamento = p.idpagamento 
+WHERE f.datavencimento = p.datapagamento
+GROUP BY f.datavencimento
+
+/* c. Consultar clientes que realizaram o pagamento 1 dia antes da data de vencimento da fatura.
+Retorno: Id do cliente, valor da fatura e data de pagamento. */
+
+SELECT c.idcliente, f.valor, p.datapagamento
+FROM cliente c JOIN possui po
+ON c.idcliente = po.idcliente
+JOIN fatura f ON f.idfatura = po.idfatura
+JOIN pagamento p ON f.idpagamento = p.idpagamento 
+WHERE p.datapagamento = (f.datavencimento - interval '1 day')
+
+/* d. Consultar clientes com pagamento da fatura em atraso.
+Retorno: Id do cliente, nome, valor da fatura, data de vencimento, status (P=Pago, A=Atraso), 
+e quantidade de dias em atraso. */
+
+SELECT c.idcliente, c.nome, f.valor, f.datavencimento, f.status, (CURRENT_DATE - f.datavencimento) AS
+qtde_dias_atraso
+FROM cliente c JOIN possui po
+ON c.idcliente = po.idcliente
+JOIN fatura f ON f.idfatura = po.idfatura
+JOIN pagamento p ON f.idpagamento = p.idpagamento 
+where f.datavencimento < CURRENT_DATE AND p.datapagamento IS NULL
+GROUP BY c.idcliente, f.valor, f.datavencimento, f.status
+
+/* e. Consultar cliente bloqueado por atraso no pagamento da fatura. (clientes com mais de 3 dias de atraso
+devem ser bloqueados)Retorno: Id do cliente, nome, status de bloqueio (A=Ativo, B=Bloqueado), 
+id da fatura, valor da fatura e a quantidade de dias em atraso. */
+
+SELECT c.idcliente, c.nome, c.statusbloqueio, f.idfatura, f.valor, (CURRENT_DATE - f.datavencimento) AS 
+qtde_dias_atraso
+FROM cliente c JOIN possui po
+ON c.idcliente = po.idcliente
+JOIN fatura f ON f.idfatura = po.idfatura
+JOIN pagamento p ON f.idpagamento = p.idpagamento 
+where (CURRENT_DATE - f.datavencimento) > 3 AND c.statusbloqueio = 'Bloqueado'
+
+
+
+/* 															BLOCO ANÔNIMO															 */
+
+
+
+-- a. Bloco anônimo 1: Inserir pagamento e atualizar status da fatura. 
+
+DO $$
+DECLARE 
+  id_pagamento INTEGER;
+BEGIN
+  INSERT INTO Pagamento (valor, datapagamento) VALUES (1800, '2023-02-17') 
+  RETURNING idpagamento INTO id_pagamento;
+  UPDATE Fatura SET status = 'PAGA', idpagamento = id_pagamento WHERE idfatura = 4;
+END $$;
+
+select * from fatura
+
+/* b. Bloco anônimo 2: Atualizar o limite de crédito para 0, de todos os clientes que estão bloqueados por
+atraso no pagamento da fatura. */
+
+DO $$
+BEGIN
+  UPDATE Cliente SET limitecredito = 0
+  WHERE idcliente IN (
+    SELECT idcliente FROM Possui p
+    JOIN Fatura f ON p.idfatura = f.idfatura
+    WHERE f.status = 'Atraso' AND cliente.statusbloqueio = 'Bloqueado'
+  );
+END $$;
+
+select * from cliente
+
+/* c. Bloco anônimo 3: Implementar rotina para exclusão de todos os clientes que não possuem nenhuma
+fatura. */
+
+DO $$
+DECLARE
+  cliente_id INTEGER;
+  c_clientes CURSOR FOR SELECT c.idcliente FROM cliente c
+    LEFT JOIN possui p ON c.idcliente = p.idcliente
+    WHERE p.idcliente IS NULL;
+BEGIN
+  OPEN c_clientes;
+  LOOP
+  	FETCH c_clientes INTO cliente_id;
+	EXIT WHEN NOT FOUND;
+    DELETE FROM cliente WHERE idcliente = cliente_id;
+  END LOOP;
+  CLOSE c_clientes;
+END $$;
+
