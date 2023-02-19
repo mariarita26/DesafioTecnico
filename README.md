@@ -4,4 +4,5 @@ Modelo Conceitual
 
 Modelo Lógico
 
-![Imagem do WhatsApp de 2023-02-18 à(s) 00 20 06](https://user-images.githubusercontent.com/89050107/219829279-ffe9dbb9-804b-433a-ad2e-7dce7d2ede56.jpg)
+![lógico](https://user-images.githubusercontent.com/89050107/219923077-a356bb49-ce06-4009-b38b-92302abe7517.jpg)
+
