@@ -24,10 +24,13 @@ a. Consultar clientes com idade entre 18 e 21 anos que possuem limite de crédit
   
 b. Consultar clientes cujo pagamento foi realizado no dia do vencimento da fatura.
   Retorno: Data de vencimento e a quantidade.
+  
 c. Consultar clientes que realizaram o pagamento 1 dia antes da data de vencimento da fatura.
-  Retorno: Id do cliente, valor da fatura e data de pagamento,
+  Retorno: Id do cliente, valor da fatura e data de pagamento.
+  
 d. Consultar clientes com pagamento da fatura em atraso.
   Retorno: Id do cliente, nome, valor da fatura, data de vencimento, status (P=Pago, A=Atraso), e quantidade de dias em atraso.
+  
 e. Consultar cliente bloqueado por atraso no pagamento da fatura. (clientes com mais de 3 dias de atraso devem ser bloqueados)
   Retorno: Id do cliente, nome, status de bloqueio (A=Ativo, B=Bloqueado), id da fatura, valor da fatura e a quantidade de dias em atraso.
 
