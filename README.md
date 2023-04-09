@@ -2,7 +2,7 @@
 
 ## Considere um contexto bem próximo da nossa realidade, onde precisamos construir uma base de dados para controlar as faturas de clientes de um varejista, bem como os pagamentos realizados, realizar consultas e implementar pequenas rotinas. Vamos lá…
 
-###1. Criar os scripts para a estrutura de banco, conforme indicações abaixo (aqui utilize SQL ANSI):
+### 1. Criar os scripts para a estrutura de banco, conforme indicações abaixo (aqui utilize SQL ANSI):
 
 ● Cliente [idcliente, nome, idade, statusbloqueio, limitecredito];
 ● Fatura [idfatura, datavencimento, valor, status];
@@ -12,7 +12,7 @@
   c. Disponibilizar o modelo entidade-relacionamento resultante.
   
   
-###2. Desenvolver os scripts para as seguintes consultas (aqui utilize SQL ANSI):
+### 2. Desenvolver os scripts para as seguintes consultas (aqui utilize SQL ANSI):
 
 a. Consultar clientes com idade entre 18 e 21 anos que possuem limite de crédito maior ou igual a 1.000 reais.
   Retorno: Total de clientes.
@@ -26,7 +26,7 @@ e. Consultar cliente bloqueado por atraso no pagamento da fatura. (clientes com 
   Retorno: Id do cliente, nome, status de bloqueio (A=Ativo, B=Bloqueado), id da fatura, valor da fatura e a quantidade de dias em atraso.
 
 
-###3. Implementar bloco anônimo com as seguintes instruções e utilizando estruturas de repetição (laços), sempre que possível (aqui utilize PL/SQL):
+### 3. Implementar bloco anônimo com as seguintes instruções e utilizando estruturas de repetição (laços), sempre que possível (aqui utilize PL/SQL):
 
 a. Bloco anônimo 1: Inserir pagamento e atualizar status da fatura.
 
