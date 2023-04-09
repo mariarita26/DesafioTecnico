@@ -5,10 +5,15 @@
 ### 1. Criar os scripts para a estrutura de banco, conforme indicações abaixo (aqui utilize SQL ANSI):
 
 ● Cliente [idcliente, nome, idade, statusbloqueio, limitecredito];
+
 ● Fatura [idfatura, datavencimento, valor, status];
+
 ● Pagamento [idpagamento, datapagamento, valor];
+
   a. Popular as tabelas com no máximo 10 registros cada;
+  
   b. Criar suas respectivas chaves primárias e estrangeiras;
+  
   c. Disponibilizar o modelo entidade-relacionamento resultante.
   
   
@@ -16,6 +21,7 @@
 
 a. Consultar clientes com idade entre 18 e 21 anos que possuem limite de crédito maior ou igual a 1.000 reais.
   Retorno: Total de clientes.
+  
 b. Consultar clientes cujo pagamento foi realizado no dia do vencimento da fatura.
   Retorno: Data de vencimento e a quantidade.
 c. Consultar clientes que realizaram o pagamento 1 dia antes da data de vencimento da fatura.
